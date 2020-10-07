@@ -9,7 +9,7 @@ interface ResourceByUrlInterface
      *
      * @api
      * @param string $urlKey
-     * @return \Magento\Catalog\Api\Data\ProductInterface|\Magento\Catalog\Api\Data\Category
+     * @return Data\ResourceInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getResourceByUrl($urlKey);

@@ -2,7 +2,10 @@
 
 namespace Hendel\ResourceByUrl\Model\Api;
 
-class ResourceByUrl implements \Hendel\ResourceByUrl\Api\ResourceByUrlInterface
+use \Hendel\ResourceByUrl\Api\ResourceByUrlInterface;
+use \Hendel\ResourceByUrl\Model\Api\Data\Resource;
+
+class ResourceByUrl implements ResourceByUrlInterface
 {
     /**
      * @var \Magento\Catalog\Api\ProductRepositoryInterface
@@ -38,14 +41,14 @@ class ResourceByUrl implements \Hendel\ResourceByUrl\Api\ResourceByUrlInterface
         $connection = $this->resource->getConnection();
 
         $select = $connection->select()
-        ->from(['r' => 'url_rewrite'], ['entity_type', 'entity_id'])
-        ->where('r.request_path=?', $urlKey);
+            ->from(['r' => 'url_rewrite'], ['entity_type', 'entity_id'])
+            ->where('r.request_path=?', $urlKey);
 
         $result = $connection->fetchRow($select);
 
         $resources = [
             'product' => function () use ($result) {
-                return $this->productRepository->getById($result['entity_id']);
+                return $this->productRepository->getById($result['entity_id'], 0);
             },
             'category' => function () use ($result) {
                 return $this->categoryRepository->get($result['entity_id']);
@@ -56,14 +59,9 @@ class ResourceByUrl implements \Hendel\ResourceByUrl\Api\ResourceByUrlInterface
             throw new \Magento\Framework\Exception\NoSuchEntityException();
         }
 
-        return $resources[$result['entity_type']]();
-    }
+        $resource = new Resource($result['entity_type']);
+        $resource->setData($resources[$result['entity_type']]());
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceById($id)
-    {
-        return $this->productRepository->getById($id);
+        return $resource;
     }
 }
