@@ -1,6 +1,6 @@
 <?php
 
-namespace Hendel\ResourceBy\Model\Api;
+namespace Hendel\ResourceByUrl\Model\Api;
 
 class ResourceByUrl implements \Hendel\ResourceByUrl\Api\ResourceByUrlInterface
 {
